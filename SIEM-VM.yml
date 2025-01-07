@@ -85,9 +85,10 @@
         - Restart Kibana
 
     - name: Start en schakel Kibana in
-      command: /usr/share/kibana/bin/kibana
-      args:
-        chdir: /usr/share/kibana
+      shell: |
+        nohup /usr/share/kibana/bin/kibana > /var/log/kibana/kibana.log 2>&1 &
+      become: true
+      become_user: kibana
 
     # Wazuh integratie met Elasticsearch
     - name: Maak de map voor Wazuh Elasticsearch template aan
