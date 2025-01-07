@@ -35,10 +35,7 @@
         state: present
 
     - name: Start en activeer Wazuh Manager service
-      systemd:
-        name: wazuh-manager
-        state: started
-        enabled: yes
+      command: /var/ossec/bin/wazuh-control start
 
     # Suricata installatie
     - name: Voeg Suricata repository toe
