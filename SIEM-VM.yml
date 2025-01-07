@@ -45,9 +45,9 @@
         state: present
 
     - name: Voeg Elasticsearch repository toe
-      apt_repository:
-        repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
-        state: present
+      shell: |
+        echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" > /etc/apt/sources.list.d/elastic-7.x.list
+      become: true
 
     - name: Werk apt-cache bij
       apt:
