@@ -51,10 +51,7 @@
         create: yes
         
     - name: Start en activeer Wazuh Agent service
-      systemd:
-        name: wazuh-agent
-        state: started
-        enabled: yes
+      command: /var/ossec/bin/wazuh-control start
 
     # Suricata installatie
     - name: Voeg Suricata repository toe
