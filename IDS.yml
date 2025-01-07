@@ -69,10 +69,7 @@
         state: present
 
     - name: Start en activeer Suricata service
-      service:
-        name: suricata
-        state: started
-        enabled: yes
+      command: /usr/bin/suricata -c /etc/suricata/suricata.yaml
 
     # Elasticsearch installatie
      # Voeg de Elasticsearch GPG-sleutel toe
