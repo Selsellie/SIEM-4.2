@@ -1,0 +1,83 @@
+---
+- name: Installeer Wazuh
+  hosts: all
+  become: yes
+
+  tasks:
+    # Wazuh installatie
+    - name: Werk apt-cache bij
+      apt:
+        update_cache: yes
+
+    - name: Installeer vereiste pakketten voor Wazuh
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - lsb-release
+        state: present
+
+    - name: Voeg Wazuh GPG-sleutel toe
+      shell: curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | apt-key add -
+
+    - name: Voeg Wazuh repository toe
+      copy:
+        content: "deb https://packages.wazuh.com/4.x/apt/ stable main\n"
+        dest: /etc/apt/sources.list.d/wazuh.list
+
+    - name: Werk apt-cache bij na toevoegen Wazuh repository
+      apt:
+        update_cache: yes
+
+    - name: Installeer Wazuh Manager
+      apt:
+        name: wazuh-manager
+        state: present
+
+    - name: Start en activeer Wazuh Manager service
+      systemd:
+        name: wazuh-manager
+        state: started
+        enabled: yes
+
+    # Suricata installatie
+    - name: Voeg Suricata repository toe
+      apt_repository:
+        repo: ppa:oisf/suricata-stable
+        state: present
+
+    - name: Werk apt-cache bij voor Suricata
+      apt:
+        update_cache: yes
+
+    - name: Installeer Suricata
+      apt:
+        name: suricata
+        state: present
+
+    - name: Start en activeer Suricata service
+      service:
+        name: suricata
+        state: started
+        enabled: yes
+
+    - name: Werk apt-cache bij
+      apt:
+        update_cache: yes
+
+    - name: Start Filebeat voor Wazuh logs
+      apt:
+        name: filebeat
+        state: present
+
+    - name: Configureer Filebeat voor Wazuh
+      copy:
+        src: /etc/filebeat/filebeat.yml
+        dest: /etc/filebeat/filebeat.yml
+        mode: '0644'
+
+    - name: Start en schakel Filebeat in
+      service:
+        name: filebeat
+        state: started
+        enabled: yes
