@@ -65,10 +65,9 @@
         line: 'discovery.type: single-node'
 
     - name: Start en schakel Elasticsearch in
-      service:
-        name: elasticsearch
-        state: started
-        enabled: yes
+      command: /usr/share/elasticsearch/bin/elasticsearch
+      args:
+        chdir: /usr/share/elasticsearch
 
     - name: Installeer Kibana
       apt:
@@ -85,10 +84,9 @@
         - Restart Kibana
 
     - name: Start en schakel Kibana in
-      service:
-        name: kibana
-        state: started
-        enabled: yes
+      command: /usr/share/kibana/bin/kibana
+      args:
+        chdir: /usr/share/kibana
 
     # Wazuh integratie met Elasticsearch
     - name: Maak de map voor Wazuh Elasticsearch template aan
@@ -112,11 +110,7 @@
 
   handlers:
     - name: Restart Elasticsearch
-      service:
-        name: elasticsearch
-        state: restarted
-
+      shell: nohup /usr/share/elasticsearch/bin/elasticsearch > /var/log/elasticsearch.log 2>&1 &
+  
     - name: Restart Kibana
-      service:
-        name: kibana
-        state: restarted
+      shell: nohup /usr/share/kibana/bin/kibana > /var/log/kibana.log 2>&1 &
