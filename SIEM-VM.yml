@@ -53,24 +53,6 @@
     - name: Start en activeer Wazuh Agent service
       command: /var/ossec/bin/wazuh-control start
 
-    # Suricata installatie
-    - name: Voeg Suricata repository toe
-      apt_repository:
-        repo: ppa:oisf/suricata-stable
-        state: present
-
-    - name: Werk apt-cache bij voor Suricata
-      apt:
-        update_cache: yes
-
-    - name: Installeer Suricata
-      apt:
-        name: suricata
-        state: present
-
-    - name: Start en activeer Suricata service
-      command: /usr/bin/suricata -c /etc/suricata/suricata.yaml
-
     # Elasticsearch installatie
      # Voeg de Elasticsearch GPG-sleutel toe
     - name: Voeg Elasticsearch GPG-sleutel toe
@@ -143,23 +125,6 @@
         curl -X PUT "http://localhost:9200/_template/wazuh"
         -H 'Content-Type: application/json'
         -d @/var/ossec/integrations/elastic/elastic-wazuh-template.json
-
-    - name: Start Filebeat voor Wazuh logs
-      apt:
-        name: filebeat
-        state: present
-
-    - name: Configureer Filebeat voor Wazuh
-      copy:
-        src: /etc/filebeat/filebeat.yml
-        dest: /etc/filebeat/filebeat.yml
-        mode: '0644'
-
-    - name: Start en schakel Filebeat in
-      service:
-        name: filebeat
-        state: started
-        enabled: yes
 
   handlers:
     - name: Restart Elasticsearch
