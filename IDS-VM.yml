@@ -85,7 +85,4 @@
         mode: '0644'
 
     - name: Start en schakel Filebeat in
-      service:
-        name: filebeat
-        state: started
-        enabled: yes
+      command: /usr/share/filebeat/bin/filebeat -e -c /etc/filebeat/filebeat.yml
