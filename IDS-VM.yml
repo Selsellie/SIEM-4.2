@@ -53,10 +53,9 @@
         state: present
 
     - name: Start en activeer Suricata service
-      service:
-        name: suricata
-        state: started
-        enabled: yes
+      command: /usr/bin/suricata -c /etc/suricata/suricata.yaml
+      args:
+        chdir: /var/log/suricata
 
     - name: Werk apt-cache bij
       apt:
