@@ -65,9 +65,10 @@
         line: 'discovery.type: single-node'
 
     - name: Start en schakel Elasticsearch in
-      command: /usr/share/elasticsearch/bin/elasticsearch
-      args:
-        chdir: /usr/share/elasticsearch
+      shell: |
+        nohup /usr/share/elasticsearch/bin/elasticsearch > /var/log/elasticsearch/elasticsearch.log 2>&1 &
+      become: true
+      become_user: elasticsearch
 
     - name: Installeer Kibana
       apt:
