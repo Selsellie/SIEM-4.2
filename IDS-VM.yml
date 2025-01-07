@@ -5,10 +5,6 @@
 
   tasks:
     # Wazuh installatie
-    - name: Werk apt-cache bij
-      apt:
-        update_cache: yes
-
     - name: Installeer vereiste pakketten voor Wazuh
       apt:
         name:
@@ -20,19 +16,35 @@
     - name: Voeg Wazuh GPG-sleutel toe
       shell: curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | apt-key add -
 
-    - name: Voeg Wazuh repository toe
-      copy:
-        content: "deb https://packages.wazuh.com/4.x/apt/ stable main\n"
-        dest: /etc/apt/sources.list.d/wazuh.list
+    - name: Add Wazuh repository key
+      apt_key:
+        url: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+        state: present
+
+    - name: Add Wazuh repository
+      apt_repository:
+        repo: "deb https://packages.wazuh.com/4.x/apt/ stable main"
+        state: present
+      notify:
+        - Update apt cache
+
+    - name: Install Wazuh Agent
+      apt:
+        name: wazuh-agent
+        state: present
+        update_cache: yes
 
     - name: Werk apt-cache bij na toevoegen Wazuh repository
       apt:
         update_cache: yes
 
-    - name: Installeer Wazuh Manager
-      apt:
-        name: wazuh-manager
-        state: present
+    - name: Configure Wazuh Agent to connect to Wazuh Manager
+      lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        regexp: '.*<address>.*'
+        line: '        <address>51.137.208.105</address>'
+        insertafter: '<server>'
+        create: yes
 
     - name: Start en activeer Wazuh Manager service
       command: /var/ossec/bin/wazuh-control start
