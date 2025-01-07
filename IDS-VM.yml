@@ -65,7 +65,7 @@
         state: present
 
     - name: Start en activeer Suricata service
-      command: /usr/bin/suricata -c /etc/suricata/suricata.yaml --pcap
+      command: /usr/bin/suricata -c /etc/suricata/suricata.yaml -i eth0 --pcap
       become: true
 
     - name: Werk apt-cache bij
